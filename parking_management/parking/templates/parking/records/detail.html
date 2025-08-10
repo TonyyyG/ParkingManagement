@@ -1,0 +1,59 @@
+{% extends 'parking/base.html' %}
+
+{% block title %}停车记录详情{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>停车记录详情</h2>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h3>车辆信息</h3>
+                    <p><strong>车牌号:</strong> {{ parking_record.vehicle.license_plate }}</p>
+                    <p><strong>车辆类型:</strong> {{ parking_record.vehicle.vehicle_type }}</p>
+                    <p><strong>车主姓名:</strong> {{ parking_record.vehicle.owner_name }}</p>
+                    <p><strong>联系电话:</strong> {{ parking_record.vehicle.owner_phone }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h3>停车场信息</h3>
+                    <p><strong>停车场名称:</strong> {{ parking_record.parking_space.parking_lot.name }}</p>
+                    <p><strong>停车场地址:</strong> {{ parking_record.parking_space.parking_lot.address }}</p>
+                    <p><strong>停车位编号:</strong> {{ parking_record.parking_space.number }}</p>
+                    <p><strong>停车位类型:</strong> {{ parking_record.parking_space.status }}</p>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h3>停车信息</h3>
+                    <p><strong>入场时间:</strong> {{ parking_record.start_time|date:'Y-m-d H:i:s' }}</p>
+                    {% if parking_record.end_time %}
+                    <p><strong>出场时间:</strong> {{ parking_record.end_time|date:'Y-m-d H:i:s' }}</p>
+                    <p><strong>停车时长:</strong> {{ duration|floatformat:2 }} 小时</p>
+                    <p><strong>停车费用:</strong> ¥{{ parking_record.fee }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <h3>状态信息</h3>
+                    <p>
+                        <span class="badge {% if parking_record.end_time %}badge-success{% else %}badge-warning{% endif %}">
+                            {% if parking_record.end_time %}已完成{% else %}进行中{% endif %}
+                        </span>
+                    </p>
+
+                </div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <a href="{% url 'parking_record_list' %}" class="btn btn-secondary mr-2">返回列表</a>
+                </div>
+                {% if not parking_record.end_time %}
+                <a href="{% url 'parking_record_update' parking_record.id %}" class="btn btn-primary">完成停车</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

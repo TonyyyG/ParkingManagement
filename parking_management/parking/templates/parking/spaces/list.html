@@ -1,0 +1,32 @@
+{% extends 'parking/base.html' %}
+
+{% block content %}
+    <h1>停车位列表</h1>
+    <a href="{% url 'parking_space_create' %}" class="btn btn-primary mb-3">创建新停车位</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>编号</th>
+                <th>停车场</th>
+                <th>状态</th>
+                <th>残疾人车位</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for space in spaces %}
+            <tr>
+                <td>{{ space.number }}</td>
+                <td>{{ space.parking_lot.name }}</td>
+                <td>{{ space.get_status_display }}</td>
+                <td>{{ space.is_handicapped|yesno:'是,否' }}</td>
+                <td>
+                    <a href="{% url 'parking_space_detail' space.pk %}" class="btn btn-info btn-sm">查看</a>
+                    <a href="{% url 'parking_space_update' space.pk %}" class="btn btn-warning btn-sm">编辑</a>
+                    <a href="{% url 'parking_space_delete' space.pk %}" class="btn btn-danger btn-sm">删除</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

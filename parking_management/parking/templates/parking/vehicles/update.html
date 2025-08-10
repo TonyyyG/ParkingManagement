@@ -1,0 +1,52 @@
+{% extends 'parking/base.html' %}
+
+{% block title %}更新车辆 - {{ vehicle.license_plate }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>更新车辆</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.license_plate.label_tag }}
+                    {{ form.license_plate }} {% if form.license_plate.errors %}
+                    <div class="text-danger">
+                        {% for error in form.license_plate.errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.vehicle_type.label_tag }}
+                    {{ form.vehicle_type }} {% if form.vehicle_type.errors %}
+                    <div class="text-danger">
+                        {% for error in form.vehicle_type.errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.owner_name.label_tag }}
+                    {{ form.owner_name }} {% if form.owner_name.errors %}
+                    <div class="text-danger">
+                        {% for error in form.owner_name.errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.owner_phone.label_tag }}
+                    {{ form.owner_phone }} {% if form.owner_phone.errors %}
+                    <div class="text-danger">
+                        {% for error in form.owner_phone.errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn btn-primary">更新</button>
+                <a href="{% url 'vehicle_detail' vehicle.id %}" class="btn btn-secondary ml-2">取消</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

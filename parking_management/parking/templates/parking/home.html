@@ -1,0 +1,48 @@
+{% extends 'parking/base.html' %}
+
+{% block content %}
+    <div class="jumbotron">
+        <h1 class="display-4">欢迎使用易路停车-智慧停车管理平台</h1>
+        <p class="lead">本系统提供停车场、停车位、车辆和停车记录的全面管理功能。</p>
+        <hr class="my-4">
+        <p>快速访问系统功能：</p>
+        <div class="row mt-4">
+            <div class="col-md-3 mb-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">停车场管理</h5>
+                        <p class="card-text">共有 {{ total_lots }} 个停车场</p>
+                        <a href="{% url 'parking_lot_list' %}" class="btn btn-primary">查看详情</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">停车位管理</h5>
+                        <p class="card-text">共有 {{ total_spaces }} 个车位，可用：{{ available_spaces }}</p>
+                        <a href="{% url 'parking_space_list' %}" class="btn btn-primary">查看详情</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">车辆管理</h5>
+                        <p class="card-text">共有 {{ total_vehicles }} 辆车</p>
+                        <a href="{% url 'vehicle_list' %}" class="btn btn-primary">查看详情</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">停车记录</h5>
+                        <p class="card-text">共有 {{ total_records }} 条记录</p>
+                        <a href="{% url 'parking_record_list' %}" class="btn btn-primary">查看详情</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

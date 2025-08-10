@@ -1,0 +1,52 @@
+{% extends 'parking/base.html' %}
+
+{% block title %}更新停车位 - {{ parking_space.number }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>更新停车位</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.number.label_tag }}
+                    {{ form.number }} {% if form.number.errors %}
+                    <div class="text-danger">
+                        {% for error in form.number.errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.parking_lot.label_tag }}
+                    {{ form.parking_lot }} {% if form.parking_lot.errors %}
+                    <div class="text-danger">
+                        {% for error in form.parking_lot.errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.status.label_tag }}
+                    {{ form.status }} {% if form.status.errors %}
+                    <div class="text-danger">
+                        {% for error in form.status.errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.is_handicapped.label_tag }}
+                    {{ form.is_handicapped }} {% if form.is_handicapped.errors %}
+                    <div class="text-danger">
+                        {% for error in form.is_handicapped.errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn btn-primary">更新</button>
+                <a href="{% url 'parking_space_detail' parking_space.id %}" class="btn btn-secondary ml-2">取消</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends 'parking/base.html' %}
+
+{% block title %}车辆详情 - {{ vehicle.license_plate }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h2>车辆详情</h2>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h3>{{ vehicle.license_plate }}</h3>
+                    <p><strong>车辆类型:</strong> {{ vehicle.vehicle_type }}</p>
+                </div>
+                <div class="col-md-6 text-right">
+
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>车主姓名:</strong> {{ vehicle.owner_name }}</p>
+                    <p><strong>联系电话:</strong> {{ vehicle.owner_phone }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>创建时间:</strong> {{ vehicle.created_at }}</p>
+                    <p><strong>更新时间:</strong> {{ vehicle.updated_at }}</p>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <div>
+                    <a href="{% url 'vehicle_update' vehicle.id %}" class="btn btn-primary mr-2">编辑</a>
+                    <a href="{% url 'vehicle_list' %}" class="btn btn-secondary mr-2">返回列表</a>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+                        删除
+                    </button>
+                </div>
+                <a href="{% url 'parking_record_create' %}?vehicle_id={{ vehicle.id }}" class="btn btn-success">创建停车记录</a>
+            </div>
+        </div>
+    </div>
+
+    {% if parking_records %}
+    <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            <h3>停车记录</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>停车场</th>
+                        <th>停车位</th>
+                        <th>入场时间</th>
+                        <th>出场时间</th>
+                        <th>费用</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in parking_records %}
+                    <tr>
+                        <td>{{ record.parking_space.parking_lot.name }}</td>
+                        <td>{{ record.parking_space.number }}</td>
+                        <td>{{ record.start_time }}</td>
+                        <td>{{ record.end_time|default:'-' }}</td>
+                        <td>{{ record.fee|default:'-' }}</td>
+                        <td>
+                            {% if record.exit_time %}
+                            <span class="badge badge-success">已完成</span>
+                            {% else %}
+                            <span class="badge badge-warning">进行中</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'parking_record_detail' record.id %}" class="btn btn-sm btn-info mr-1">查看</a>
+                            {% if not record.exit_time %}
+                            <a href="{% url 'parking_record_update' record.id %}" class="btn btn-sm btn-primary mr-1">完成停车</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 删除确认模态框 -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">确认删除</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    确定要删除车辆 {{ vehicle.license_plate }} 吗？此操作不可撤销。
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <form action="{% url 'vehicle_delete' vehicle.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">删除</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

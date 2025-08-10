@@ -1,0 +1,131 @@
+{% extends 'parking/base.html' %}
+
+{% block title %}停车场详情 - {{ parking_lot.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h2>停车场详情</h2>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h3>{{ parking_lot.name }}</h3>
+                    <p class="text-muted">{{ parking_lot.address }}</p>
+                </div>
+                <div class="col-md-6 text-right">
+                    <span class="badge {% if parking_lot.is_active %}badge-success{% else %}badge-danger{% endif %}">
+                        {% if parking_lot.is_active %}运营中{% else %}已关闭{% endif %}
+                    </span>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-light text-center p-3">
+                        <h4>总车位</h4>
+                        <p class="display-4">{{ parking_lot.total_spaces }}</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white text-center p-3">
+                        <h4>可用车位</h4>
+                        <p class="display-4">{{ parking_lot.available_spaces }}</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white text-center p-3">
+                        <h4>已用车位</h4>
+                        <p class="display-4">{{ used_spaces }}</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white text-center p-3">
+                        <h4>占用率</h4>
+                        <p class="display-4">{{ occupancy_rate|floatformat:1 }}%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-4">
+                <h4>停车场描述</h4>
+                <p>{{ parking_lot.description }}</p>
+            </div>
+            <div class="d-flex justify-content-between mb-4">
+                <div>
+                    <a href="{% url 'parking_lot_update' parking_lot.id %}" class="btn btn-primary mr-2">编辑</a>
+                    <a href="{% url 'parking_lot_list' %}" class="btn btn-secondary mr-2">返回列表</a>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+                        删除
+                    </button>
+                </div>
+                <a href="{% url 'parking_space_create' %}?lot_id={{ parking_lot.id }}" class="btn btn-success">添加停车位</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            <h3>停车位列表</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>车位编号</th>
+                        <th>类型</th>
+                        <th>位置描述</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for space in parking_spaces %}
+                    <tr>
+                        <td>{{ space.number }}</td>
+                        <td>{% if space.is_handicapped %}残疾人车位{% else %}普通车位{% endif %}</td>
+                        <td>-</td>
+                        <td>
+                            <span class="badge {% if space.status == 'available' %}badge-success{% else %}badge-danger{% endif %}">
+                                {% if space.status == 'available' %}可用{% else %}已占用{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'parking_space_detail' space.id %}" class="btn btn-sm btn-info mr-1">查看</a>
+                            <a href="{% url 'parking_space_update' space.id %}" class="btn btn-sm btn-primary mr-1">编辑</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">暂无停车位数据</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 删除确认模态框 -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">确认删除</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    确定要删除停车场 {{ parking_lot.name }} 吗？此操作不可撤销。
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <form action="{% url 'parking_lot_delete' parking_lot.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">删除</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
